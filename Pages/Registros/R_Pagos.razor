@@ -1,0 +1,161 @@
+@page "/pago"
+@page "/pago/{PagoId:int}"
+
+@inject PagosBLL PagosBLL
+@inject NotificationService notificationService
+
+<EditForm Model="pago" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card">
+        <div class="card-header">
+            <h3>Registros de Pagos</h3>
+        </div>
+        <div class="card-body">
+            <div class="container overflow-hidden">
+                <div class="row gy-6">
+
+                    @*PagoId*@
+                     <label>pago ID</label>
+                    <div class="form-r ow align-items-center">
+                        <div class="col">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <InputNumber @bind-Value="pago.PagoId" class="form-control" />
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-primary" type="button" @onclick="Buscar"> <i class="oi oi-magnifying-glass" /> </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+
+
+
+                     @*Fecha*@
+             <div class="form-group">
+                <label>Fecha</label>
+                <InputDate @bind-Value="pago.Fecha" class="form-control" />
+                <ValidationMessage For="@(() => pago.Fecha)" />
+            </div>
+
+                  @*Persona Id*@
+             <div class="form-group">
+                <label>Persona ID</label>
+                <InputNumber @bind-Value="pago.PersonaID" class="form-control" />
+                <ValidationMessage For="@(() => pago.PersonaID)" />
+            </div>
+
+             @*Concepto*@
+             <div class="form-group">
+                <label>Concepto</label>
+                <InputText @bind-Value="pago.Concepto" class="form-control" />
+                <ValidationMessage For="@(() => pago.Concepto)" />
+            </div>
+
+                  @*Monto*@
+             <div class="form-group">
+                <label>Monto</label>
+                <InputNumber @bind-Value="pago.Monto" class="form-control" />
+                <ValidationMessage For="@(() => pago.Monto)" />
+            </div>
+
+               <div class="card-footer d-flex justify-content-center">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-primary" @onclick="Nuevo"> <i class="oi oi-file" /> Nuevo</button>
+                <button type="submit" class="btn btn-success"> <i class="oi oi-document" /> Guardar</button>
+                <button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="oi oi-trash" /> Eliminar</button>
+            </div>
+        </div>
+        </div>
+
+        </div>
+
+        </div> 
+
+     </div>
+</EditForm> 
+
+
+
+@code
+ {
+
+    [Parameter]
+    public int PagoId { get; set; }
+    public Pagos pago { get; set; } = new Pagos();
+    public String mensaje { get; set; } = "";
+
+    protected override void OnInitialized()
+    {
+        if (PagoId > 0)
+        {
+            
+            this.pago.PagoId = PagoId;
+            this.Buscar();
+        }
+    }
+
+    public void Nuevo()
+    {
+        mensaje = "";
+        pago = new Pagos();
+    }
+
+     bool Validar()
+    {
+        return pago.Concepto.Contains(".");
+    } 
+
+    public void Guardar()
+    {
+
+        bool guardo = PagosBLL.Guardar(pago);
+
+        if (guardo)
+        {
+            ShowNotification(
+            new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Guardado correctamente"
+            });
+
+            Nuevo();
+        }
+    }
+    private void Buscar()
+    {
+        if (pago.PagoId > 0)
+        {
+            var encontrado = PagosBLL.Buscar(pago.PagoId);
+
+            if (encontrado != null)
+                this.pago = encontrado;
+        }
+    }
+
+    public void Eliminar()
+    {
+        bool elimino;
+
+        elimino = PagosBLL.Eliminar(pago);
+
+        if (elimino)
+        {
+            ShowNotification(
+            new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Eliminado correctamente"
+            });
+            Nuevo();
+
+        }
+    }
+
+    void ShowNotification(NotificationMessage message)
+    {
+        notificationService.Notify(message);
+
+    }
+} 
