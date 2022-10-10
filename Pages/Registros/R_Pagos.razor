@@ -15,70 +15,73 @@
                 <div class="row gy-6">
 
                     @*PagoId*@
-                     <label>pago ID</label>
+                    <label>pago ID</label>
                     <div class="form-r ow align-items-center">
                         <div class="col">
                             <div class="form-group">
                                 <div class="input-group">
                                     <InputNumber @bind-Value="pago.PagoId" class="form-control" />
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-primary" type="button" @onclick="Buscar"> <i class="oi oi-magnifying-glass" /> </button>
+                                        <button class="btn btn-outline-primary" type="button" @onclick="Buscar"> <i
+                                                class="oi oi-magnifying-glass" /> </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div> 
+                    </div>
 
 
 
-                     @*Fecha*@
-             <div class="form-group">
-                <label>Fecha</label>
-                <InputDate @bind-Value="pago.Fecha" class="form-control" />
-                <ValidationMessage For="@(() => pago.Fecha)" />
+                    @*Fecha*@
+                    <div class="form-group">
+                        <label>Fecha</label>
+                        <InputDate @bind-Value="pago.Fecha" class="form-control" />
+                        <ValidationMessage For="@(() => pago.Fecha)" />
+                    </div>
+
+                    @*Persona Id*@
+                    <div class="form-group">
+                        <label>Persona ID</label>
+                        <InputNumber @bind-Value="pago.PersonaID" class="form-control" />
+                        <ValidationMessage For="@(() => pago.PersonaID)" />
+                    </div>
+
+                    @*Concepto*@
+                    <div class="form-group">
+                        <label>Concepto</label>
+                        <InputText @bind-Value="pago.Concepto" class="form-control" />
+                        <ValidationMessage For="@(() => pago.Concepto)" />
+                    </div>
+
+                    @*Monto*@
+                    <div class="form-group">
+                        <label>Monto</label>
+                        <InputNumber @bind-Value="pago.Monto" class="form-control" />
+                        <ValidationMessage For="@(() => pago.Monto)" />
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-center">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-primary" @onclick="Nuevo"> <i class="oi oi-file" />
+                                Nuevo</button>
+                            <button type="submit" class="btn btn-success"> <i class="oi oi-document" /> Guardar</button>
+                            <button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="oi oi-trash" />
+                                Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-                  @*Persona Id*@
-             <div class="form-group">
-                <label>Persona ID</label>
-                <InputNumber @bind-Value="pago.PersonaID" class="form-control" />
-                <ValidationMessage For="@(() => pago.PersonaID)" />
-            </div>
-
-             @*Concepto*@
-             <div class="form-group">
-                <label>Concepto</label>
-                <InputText @bind-Value="pago.Concepto" class="form-control" />
-                <ValidationMessage For="@(() => pago.Concepto)" />
-            </div>
-
-                  @*Monto*@
-             <div class="form-group">
-                <label>Monto</label>
-                <InputNumber @bind-Value="pago.Monto" class="form-control" />
-                <ValidationMessage For="@(() => pago.Monto)" />
-            </div>
-
-               <div class="card-footer d-flex justify-content-center">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-primary" @onclick="Nuevo"> <i class="oi oi-file" /> Nuevo</button>
-                <button type="submit" class="btn btn-success"> <i class="oi oi-document" /> Guardar</button>
-                <button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="oi oi-trash" /> Eliminar</button>
-            </div>
         </div>
-        </div>
 
-        </div>
-
-        </div> 
-
-     </div>
-</EditForm> 
+    </div>
+</EditForm>
 
 
 
 @code
- {
+{
 
     [Parameter]
     public int PagoId { get; set; }
@@ -89,7 +92,7 @@
     {
         if (PagoId > 0)
         {
-            
+
             this.pago.PagoId = PagoId;
             this.Buscar();
         }
@@ -101,10 +104,10 @@
         pago = new Pagos();
     }
 
-     bool Validar()
+    bool Validar()
     {
         return pago.Concepto.Contains(".");
-    } 
+    }
 
     public void Guardar()
     {
@@ -158,4 +161,4 @@
         notificationService.Notify(message);
 
     }
-} 
+}

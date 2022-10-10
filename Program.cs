@@ -7,7 +7,7 @@ using RegistroPago.Data;
 var builder = WebApplication.CreateBuilder(args);
 var ConStr = builder.Configuration.GetConnectionString("ConStr");
 
-builder.Services.AddDbContext<Contexto>(options => 
+builder.Services.AddDbContext<Contexto>(options =>
 options.UseSqlite(ConStr)
 );
 
@@ -15,7 +15,7 @@ options.UseSqlite(ConStr)
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<PagosBLL>();
- builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<NotificationService>();
 
 
 var app = builder.Build();

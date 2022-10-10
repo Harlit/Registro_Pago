@@ -3,39 +3,39 @@
 
 <EditForm Model="Informacion">
     <DataAnnotationsValidator />
-        <div class="card-body">
-            <form>
-                <div>
+    <div class="card-body">
+        <form>
+            <div>
 
-                    <button type="button" @onclick="Buscar">Buscar Pagos</button>
+                <button type="button" @onclick="Buscar">Buscar Pagos</button>
 
-                </div>
-            </form>
-        </div>
-        <table class="table">
-            <thead>
+            </div>
+        </form>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>PagoId</th>
+                <th>Fecha</th>
+                <th>PersonaID</th>
+                <th>Concepto</th>
+                <th>Monto</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Informacion)
+            {
                 <tr>
-                    <th>PagoId</th>
-                    <th>Fecha</th>
-                    <th>PersonaID</th>
-                    <th>Concepto</th>
-                    <th>Monto</th>
+                    <td>@item.PagoId</td>
+                    <td>@item.Fecha</td>
+                    <td>@item.PersonaID</td>
+                    <td>@item.Concepto</td>
+                    <td>@item.Monto</td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Informacion)
-                {
-                    <tr>
-                        <td>@item.PagoId</td>
-                        <td>@item.Fecha</td>
-                        <td>@item.PersonaID</td>
-                        <td>@item.Concepto</td>
-                        <td>@item.Monto</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    
+            }
+        </tbody>
+    </table>
+
 </EditForm>
 
 @code {
