@@ -2,10 +2,11 @@
 @page "/Prestamo/{PrestamoId:int}"
 
 @inject PrestamosBLL PrestamosBLL
+@inject PersonasBLL PersonasBLL
 @inject NotificationService notificationService
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
-<EditForm Model="prestamo" OnValidSubmit="Guardar">
+<EditForm Model = "prestamo" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div class="card">
@@ -45,11 +46,15 @@
             </div>
 
             @*PersonaId*@
-            <div class="form-group">
-                <label>PersonaId</label>
-                <InputSelect @bind-Value="prestamo.PersonaId" class="form-control" />
-                <ValidationMessage For="@(() => prestamo.PersonaId)" />
-            </div>
+            <div class="form-group col">
+                    <label >PersonaId</label>
+                    <InputSelect class="form-select" @bind-Value="prestamo.PersonaId">
+                        @foreach (Personas prestamo in Informacion)
+                        {
+                            <option value="@prestamo.PersonaId">@prestamo.PersonaId (ID: @prestamo.PersonaId)</option>
+                        }
+                    </InputSelect>
+                </div>
 
             @*Concepto*@
             <div class="form-group">
@@ -89,9 +94,12 @@
     public int PrestamoId { get; set; }
     public Prestamos prestamo { get; set; } = new Prestamos();
     public String mensaje { get; set; } = "";
+    public List<Personas> Informacion { get; set; } = new List<Personas>();
+
 
     protected override void OnInitialized()
     {
+        Informacion = PersonasBLL.GetList(o => true);
         if (PrestamoId > 0)
         {
             this.prestamo.PrestamoId = PrestamoId;
