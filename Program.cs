@@ -7,6 +7,8 @@ using RegistroPago.Data;
 var builder = WebApplication.CreateBuilder(args);
 var ConStr = builder.Configuration.GetConnectionString("ConStr");
 
+
+
 builder.Services.AddDbContext<Contexto>(options =>
 options.UseSqlite(ConStr)
 );

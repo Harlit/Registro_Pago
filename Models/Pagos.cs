@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Pagos
 {
@@ -13,4 +13,7 @@ public class Pagos
     public string? Concepto { get; set; }
     [Required(ErrorMessage = "El Monto es requerida")]
     public int Monto { get; set; }
+
+    // [ForeignKey("PagoDetalleId")]
+//  public virtual  List<PagoDetalle> PagosDetalle {get; set;} = new List<PagoDetalle>();
 }
