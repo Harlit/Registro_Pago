@@ -19,6 +19,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<PagosBLL>();
 builder.Services.AddScoped<OcupacionesBLL>();
 builder.Services.AddScoped<PersonasBLL>();
+builder.Services.AddScoped<PrestamosBLL>();
 builder.Services.AddScoped<NotificationService>();
 
 
