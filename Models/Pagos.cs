@@ -8,7 +8,7 @@ public class Pagos
     [Required(ErrorMessage = "La Fecha es requerida")]
     public DateTime Fecha { get; set; }
     [Required(ErrorMessage = "La PersonaId es requerida")]
-    public int PersonaID { get; set; }
+    public int PersonaId { get; set; }
     [Required(ErrorMessage = "El Concepto es requerida")]
     public string? Concepto { get; set; }
     [Required(ErrorMessage = "El Monto es requerida")]

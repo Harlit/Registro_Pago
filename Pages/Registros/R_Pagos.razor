@@ -3,6 +3,7 @@
 
 @inject PagosBLL PagosBLL
 @inject PersonasBLL PersonasBLL
+@inject PrestamosBLL PrestamosBLL
 @inject NotificationService notificationService
 
 <EditForm Model="pago" OnValidSubmit="Guardar">
@@ -42,9 +43,13 @@
 
                     @*Persona Id*@
                     <div class="form-group">
-                        <label>Persona ID</label>
-                        <InputNumber @bind-Value="pago.PersonaID" class="form-control" />
-                        <ValidationMessage For="@(() => pago.PersonaID)" />
+                        <label>PersonaId</label>
+                        <InputSelect class="form-select" @bind-Value="pago.PersonaId">
+                            @foreach (Personas pago in Informacion)
+                            {
+                                <option value="@pago.PersonaId">@pago.PersonaId (ID: @pago.PersonaId)</option>
+                            }
+                        </InputSelect>
                     </div>
 
                     @*Concepto*@
@@ -88,9 +93,11 @@
     public int PagoId { get; set; }
     public Pagos pago { get; set; } = new Pagos();
     public String mensaje { get; set; } = "";
+    public List<Personas> Informacion { get; set; } = new List<Personas>();
 
     protected override void OnInitialized()
     {
+        Informacion = PersonasBLL.GetList(o => true);
         if (PagoId > 0)
         {
 
