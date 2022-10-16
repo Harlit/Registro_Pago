@@ -16,6 +16,24 @@ namespace RegistroPago.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.9");
 
+            modelBuilder.Entity("Ocupaciones", b =>
+                {
+                    b.Property<int>("OcupacionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Salario")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("OcupacionId");
+
+                    b.ToTable("Ocupaciones");
+                });
+
             modelBuilder.Entity("Pagos", b =>
                 {
                     b.Property<int>("PagoId")

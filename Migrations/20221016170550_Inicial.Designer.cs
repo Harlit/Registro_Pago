@@ -10,13 +10,31 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RegistroPago.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20221009191331_Inicial")]
+    [Migration("20221016170550_Inicial")]
     partial class Inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.9");
+
+            modelBuilder.Entity("Ocupaciones", b =>
+                {
+                    b.Property<int>("OcupacionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Salario")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("OcupacionId");
+
+                    b.ToTable("Ocupaciones");
+                });
 
             modelBuilder.Entity("Pagos", b =>
                 {
