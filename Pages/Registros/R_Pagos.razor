@@ -2,6 +2,7 @@
 @page "/pago/{PagoId:int}"
 
 @inject PagosBLL PagosBLL
+@inject PersonasBLL PersonasBLL
 @inject NotificationService notificationService
 
 <EditForm Model="pago" OnValidSubmit="Guardar">
