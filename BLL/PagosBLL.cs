@@ -23,8 +23,27 @@ public class PagosBLL
 
     private bool Modificar(Pagos pago)
     {
-        _contexto.Entry(pago).State = EntityState.Modified;
-        return _contexto.SaveChanges() > 0;
+        bool paso = false;
+
+        try
+        {
+            _contexto.Database.ExecuteSqlRaw($"Delete FROM PagosDetalles where PagoId={pago.PagoId}");
+
+            foreach (var anterior in pago.Detalle)
+            {
+                _contexto.Entry(anterior).State = EntityState.Added;
+            }
+
+            _contexto.Entry(pago).State = EntityState.Modified;
+
+            paso = _contexto.SaveChanges() > 0;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+
+        return paso;
     }
 
     public bool Guardar(Pagos pago)
@@ -41,13 +60,19 @@ public class PagosBLL
         return _contexto.SaveChanges() > 0;
     }
 
-    public Pagos? Buscar(int pagoId)
+    public Pagos Buscar(int id)
     {
-        return _contexto.Pagos
-                .Where(o => o.PagoId == pagoId)
-                .AsNoTracking()
-                .SingleOrDefault();
+        Pagos pago;
 
+        try
+        {
+            pago = _contexto.Pagos.Include(x => x.Detalle).Where(p => p.PagoId == id).SingleOrDefault();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+        return pago;
     }
     public List<Pagos> GetList(Expression<Func<Pagos, bool>> Criterio)
     {
