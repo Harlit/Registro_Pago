@@ -14,22 +14,10 @@ public class Pagos
     [Required(ErrorMessage = "El Monto es requerida")]
     public int Monto { get; set; }
 
-    [ForeignKey("Id")]
+    [ForeignKey("PagoId")]
 
-    public virtual List<PagosDetalle> PagosDetalles { get; set; }
-
-    public class PagosDetalle
-    {
-
-        [Key]
-        public int Id { get; set; }
-        public int PagoId { get; set; }
-
-        [Required(ErrorMessage = "El Prestamo Id Es Obligatorio")]
-        public int PrestamosId { get; set; }
-
-        public double ValorPagado { get; set; }
-
-    }
+    public List<PagosDetalles> Detalle { get; set; } = new List<PagosDetalles>();
 
 }
+
+
