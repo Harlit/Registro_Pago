@@ -16,19 +16,19 @@ public class PagosDetalles
 
     public PagosDetalles()
     {
-        this.Id = 0;
-        this.PagoId = 0;
-        this.PrestamoId = 0;
-        this.ValorPagado = 0;
+        Id = 0;
+        PagoId = 0;
+        PrestamoId = 0;
+        ValorPagado = 0;
 
     }
 
     public PagosDetalles(int Id,int PagoId, int PrestamoId,int ValorPagado)
     {
         Id = 0;
-        PagoId = 0;
-        PrestamoId = 0;
-        ValorPagado = 0;
+        PagoId = PagoId;
+        PrestamoId = PrestamoId;
+        ValorPagado = ValorPagado;
 
     }
 }

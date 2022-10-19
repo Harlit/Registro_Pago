@@ -15,8 +15,14 @@ public class Pagos
     public int Monto { get; set; }
 
     [ForeignKey("PagoId")]
+    public virtual List<PagosDetalles> PagosDetalles { get; set; }
+    public Pagos()
+    {
+        PagoId = 0;
+        Fecha = DateTime.Now;
 
-    public List<PagosDetalles> Detalle { get; set; } = new List<PagosDetalles>();
+        PagosDetalles = new List<PagosDetalles>();
+    }
 
 }
 

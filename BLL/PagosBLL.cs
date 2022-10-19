@@ -29,7 +29,7 @@ public class PagosBLL
         {
             _contexto.Database.ExecuteSqlRaw($"Delete FROM PagosDetalles where PagoId={pago.PagoId}");
 
-            foreach (var anterior in pago.Detalle)
+            foreach (var anterior in pago.PagosDetalles)
             {
                 _contexto.Entry(anterior).State = EntityState.Added;
             }
@@ -41,6 +41,11 @@ public class PagosBLL
         catch (Exception)
         {
             throw;
+        }
+
+        finally
+        {
+            _contexto.Dispose();
         }
 
         return paso;
@@ -62,15 +67,24 @@ public class PagosBLL
 
     public Pagos Buscar(int id)
     {
-        Pagos pago;
+      
+        Pagos pago = new Pagos();
+
+        // Pagos pago;
 
         try
         {
-            pago = _contexto.Pagos.Include(x => x.Detalle).Where(p => p.PagoId == id).SingleOrDefault();
+            pago = _contexto.Pagos.Include(x => x.PagosDetalles)
+            .Where(p => p.PagoId == id)
+            .SingleOrDefault();
         }
         catch (Exception)
         {
             throw;
+        }
+
+        finally{
+            _contexto.Dispose();
         }
         return pago;
     }

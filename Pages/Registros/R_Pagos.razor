@@ -66,10 +66,10 @@
                         <ValidationMessage For="@(() => pago.Monto)" />
                     </div>
 
-                    @* PagosDetalles *@
+                    @* PagosPagosDetalless *@
 
                     <div class="card-header">
-                        <h3>Pagos Detalle</h3>
+                        <h4>Pagos PagosDetalles</h4>
                     </div>
 
                     <form>
@@ -104,8 +104,8 @@
                             </div>
 
 
-                            <button type="button" class="btn btn-success col" @onclick="AgregarDetalle">
-                                Agregar Detalle
+                            <button type="button" class="btn btn-success col" @onclick="AgregarPagosDetalles">
+                                Agregar PagosDetalles
                             </button>
 
                         </div>
@@ -120,7 +120,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in pago.Detalle)
+                                @foreach (var item in pago.PagosDetalles)
                                 {
                                     <tr>
                                         <td>@item.Id</td>
@@ -164,7 +164,7 @@
     public String mensaje { get; set; } = "";
     public List<Personas> Informacion { get; set; } = new List<Personas>();
     public int Id { get; set; }
-    public List<Pagos> Detalles { get; set; } = new List<Pagos>();
+    public List<Pagos> PagosDetalless { get; set; } = new List<Pagos>();
     public int PrestamoId { get; set; }
     public int ValorPagado { get; set; }
 
@@ -237,9 +237,9 @@
         }
     }
 
-    private void AgregarDetalle()
+    private void AgregarPagosDetalles()
     {
-        this.pago.Detalle.Add(new PagosDetalles(Id, PagoId, PrestamoId, ValorPagado));
+        this.pago.PagosDetalles.Add(new PagosDetalles(Id, PagoId, PrestamoId, ValorPagado));
         Id = 0;
         PagoId = 0;
         PrestamoId = 0;
