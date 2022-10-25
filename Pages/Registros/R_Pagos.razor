@@ -1,100 +1,100 @@
 @page "/pago"
 @page "/pago/{PagoId:int}"
 
-@inject PagosBLL PagosBLL
-@inject PersonasBLL PersonasBLL
-@inject PrestamosBLL PrestamosBLL
 @inject NotificationService notificationService
+@inject PagosBLL pagosBLL
+@inject PersonasBLL personasBLL
+@inject PrestamosBLL prestamosBLL
 
-<EditForm Model="pago" OnValidSubmit="Guardar">
+<EditForm Model="pagos" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
-    <div class="card">
-        <div class="card-header">
-            <h3>Registros de Pagos</h3>
-        </div>
-        <div class="card-body">
-            <div class="container overflow-hidden">
-                <div class="row gy-6">
 
-                    @*PagoId*@
-                    <label>pago ID</label>
-                    <div class="form-r ow align-items-center">
-                        <div class="col">
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <InputNumber @bind-Value="pago.PagoId" class="form-control" />
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-primary" type="button" @onclick="Buscar"> <i
-                                                class="oi oi-magnifying-glass" /> </button>
-                                    </div>
-                                </div>
+    <div class="card shadow-lg">
+        <div class="card-header">
+            <h3>Registro de Pagos</h3>
+        </div>
+
+        <div class="card-body">
+            @*Pagos*@
+            <div class="form-row align-items-center">
+                <div class="col">
+                    <div class="form-group">
+                        <label>PagoId</label>
+                        <div class="input-group">
+                            <InputNumber @bind-Value="pagos.PagoId" class="form-control col-4" />
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary input-group-text" @onclick="Buscar">
+                                    <i class="oi oi-magnifying-glass" /> Buscar
+                                </button>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
 
 
+            @*Fecha*@
+            <div class="mb-3">
+                <label>Fecha</label>
+                <InputDate class="form-control" @bind-Value="pagos.Fecha" />
+                <ValidationMessage For="@(() => pagos.Fecha)" />
+            </div>
 
-                    @*Fecha*@
-                    <div class="form-group">
-                        <label>Fecha</label>
-                        <InputDate @bind-Value="pago.Fecha" class="form-control" />
-                        <ValidationMessage For="@(() => pago.Fecha)" />
-                    </div>
+            <div class="mb-3">
+                <label>PersonaId </label>
+                <div class="input-group mb-3">
+                    <button type="button" class="btn btn-outline-secondary" @onclick="Cargar">Cargar</button>
+                    <InputSelect class="form-select" @bind-Value="pagos.PersonaId">
+                        @foreach (var persona in listPersonas)
+                        {
+                            <option value="@persona.PersonaId">@persona.NombreCompleto </option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(()=>pagos.PersonaId)" />
+                </div>
+            </div>
 
-                    @*Persona Id*@
-                    <div class="form-group">
-                        <label>PersonaId</label>
-                        <InputSelect class="form-select" @bind-Value="pago.PersonaId">
-                            @foreach (Personas pago in Informacion)
+            @*Concepto*@
+            <div class="mb-3">
+                <label>Concepto</label>
+                <InputText class="form-control" @bind-Value="pagos.Concepto" />
+                <ValidationMessage For="@(()=> pagos.Concepto )" />
+            </div>
+
+            @*PAGOS DETALLE*@
+            <fieldset class="border-success border border-1">
+                <h3>Detalle de Pago</h3>
+                <div class="row">
+                    @*PrestamoId *@
+                    <div class="col-2">
+                        <label>Prestamo Id:</label>
+                        <InputSelect class="form-select" @bind-Value="detalle.PrestamoId">
+                            <option disabled selected> [Seleccione] </option>
+                            @foreach (var prestamo in listPrestamos)
                             {
-                                <option value="@pago.PersonaId">@pago.PersonaId (ID: @pago.PersonaId)</option>
+                                <option value="@prestamo.PrestamoId">@prestamo.PrestamoId @prestamo.Concepto
+                                    @prestamo.Balance</option>
                             }
                         </InputSelect>
                     </div>
 
-                    @*Concepto*@
-                    <div class="form-group">
-                        <label>Concepto</label>
-                        <InputText @bind-Value="pago.Concepto" class="form-control" />
-                        <ValidationMessage For="@(() => pago.Concepto)" />
-                    </div>
-
-                    @*Monto*@
-                    <div class="form-group">
-                        <label>Monto</label>
-                        <InputNumber @bind-Value="pago.Monto" class="form-control" />
-                        <ValidationMessage For="@(() => pago.Monto)" />
-                    </div>
-
-                    @* PagosPagosDetalless *@
+                    @* PagosDetalles *@
 
                     <div class="card-header">
-                        <h4>Pagos PagosDetalles</h4>
+                        <h3>Pagos Detalle</h3>
                     </div>
 
-                    <form>
-                        <div class="row input-group d-flex align-items-end">
+                    @*Boton agregar *@
+                    <div class="col-2">
+                        <br>
+                        <button type="button" class="btn btn-primary input-group-text" @onclick="AgregarDetalle">
+                            <span class="oi oi-plus">Agregar</span>
+                        </button>
+                    </div>
 
-                            @* ID *@
-                            <div class="form-group">
-                                <label>ID</label>
-                                <InputNumber class="form-control" @bind-Value="Id" />
-                                <ValidationMessage For="@(() =>Id)" />
-                            </div>
+                </div>
 
-                            @* PagoId *@
-                            <div class="form-group">
-                                <label>Pago Id</label>
-                                <InputNumber class="form-control" @bind-Value="PagoId" />
-                                <ValidationMessage For="@(() => PagoId)" />
-                            </div>
-
-                            @* PrestamoId *@
-                            <div class="form-group">
-                                <label>Prestamo Id</label>
-                                <InputNumber class="form-control" @bind-Value="PrestamoId" />
-                                <ValidationMessage For="@(() => PrestamoId)" />
-                            </div>
+            </fieldset>
 
                             @* ValorPagado *@
                             <div class="form-group">
@@ -104,8 +104,8 @@
                             </div>
 
 
-                            <button type="button" class="btn btn-success col" @onclick="AgregarPagosDetalles">
-                                Agregar PagosDetalles
+                            <button type="button" class="btn btn-success col" @onclick="AgregarDetalle">
+                                Agregar Detalle
                             </button>
 
                         </div>
@@ -120,7 +120,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in pago.PagosDetalles)
+                                @foreach (var item in pago.Detalle)
                                 {
                                     <tr>
                                         <td>@item.Id</td>
@@ -146,17 +146,36 @@
                     </div>
                 </div>
 
-            </div>
+            <hr />
 
         </div>
+    </div>
 
+    <div class="card-footer">
+        <div class="mb-3 text-center" display: inline-block>
+            <button type="button" class="btn btn-lg btn-primary" @onclick="Nuevo">
+                <i class="oi oi-file" /> Nuevo
+            </button>
+            <button type="submit" class="btn btn-lg btn-success">
+                <i class="oi oi-document" /> Guardar
+            </button>
+            <button type="button" class="btn btn-lg btn-danger" @onclick="Eliminar">
+                <i class="oi oi-trash" /> Eliminar
+            </button>
+        </div>
     </div>
 </EditForm>
+@code {
+    [Parameter]
+    public int PagoId { get; set; }
 
+    public Pagos pagos { get; set; } = new Pagos();
+    public List<Personas> listPersonas { get; set; } = new List<Personas>();
+    public List<Prestamos> listPrestamos { get; set; } = new List<Prestamos>();
+    public PagosDetalles detalle { get; set; } = new PagosDetalles();
 
-
-@code
-{
+    protected override async Task OnInitializedAsync()
+    {
 
     [Parameter]
     public int PagoId { get; set; }
@@ -164,7 +183,7 @@
     public String mensaje { get; set; } = "";
     public List<Personas> Informacion { get; set; } = new List<Personas>();
     public int Id { get; set; }
-    public List<Pagos> PagosDetalless { get; set; } = new List<Pagos>();
+    public List<Pagos> Detalles { get; set; } = new List<Pagos>();
     public int PrestamoId { get; set; }
     public int ValorPagado { get; set; }
 
@@ -173,56 +192,64 @@
         Informacion = PersonasBLL.GetList(o => true);
         if (PagoId > 0)
         {
-
-            this.pago.PagoId = PagoId;
-            this.Buscar();
+            this.pagos.PagoId = PagoId;
+            await this.Buscar();
         }
     }
+
+    private async Task Buscar()
+    {
+        if (pagos.PagoId > 0)
+        {
+            var encontrado = await pagosBLL.Buscar(pagos.PagoId);
+
+            if (encontrado != null)
+                this.pagos = encontrado;
+
+        }
+    }
+
+    public async Task Cargar()
+    {
+        listPrestamos = await prestamosBLL.GetList(p => p.PersonaId == pagos.PersonaId && p.Balance > 0);
+    }
+
+    public void AgregarDetalle()
+    {
+        pagos.Detalle.Add(detalle);
+        detalle = new PagosDetalles();
+
+        pagos.Monto = pagos.Detalle.Sum(d => d.ValorPagado);
+    }
+
 
     public void Nuevo()
     {
-        mensaje = "";
-        pago = new Pagos();
+        pagos = new Pagos();
+        pagos.Fecha = DateTime.Now;
+
     }
 
-    bool Validar()
+    public async Task Guardar()
     {
-        return pago.Concepto.Contains(".");
+        pagos.Fecha = DateTime.Now;
+        pagos.PersonaId = 1;
+        pagos.Monto = 100;
+        pagos.Concepto = "prestamo Motor";
+
+        pagos.Detalle.Add(new PagosDetalles { PrestamoId = 1, ValorPagado = 100 });
+
+        pagos.Detalle.Add(new PagosDetalles { PrestamoId = 2, ValorPagado = 200 });
+
+        await pagosBLL.Guardar(pagos);
+
     }
 
-    public void Guardar()
-    {
-
-        bool guardo = PagosBLL.Guardar(pago);
-
-        if (guardo)
-        {
-            ShowNotification(
-            new NotificationMessage
-            {
-                Severity = NotificationSeverity.Success,
-                Summary = "Guardado correctamente"
-            });
-
-            Nuevo();
-        }
-    }
-    private void Buscar()
-    {
-        if (pago.PagoId > 0)
-        {
-            var encontrado = PagosBLL.Buscar(pago.PagoId);
-
-            if (encontrado != null)
-                this.pago = encontrado;
-        }
-    }
-
-    public void Eliminar()
+    public async void Eliminar()
     {
         bool elimino;
 
-        elimino = PagosBLL.Eliminar(pago);
+        elimino = await pagosBLL.Eliminar(pagos);
 
         if (elimino)
         {
@@ -237,9 +264,9 @@
         }
     }
 
-    private void AgregarPagosDetalles()
+    private void AgregarDetalle()
     {
-        this.pago.PagosDetalles.Add(new PagosDetalles(Id, PagoId, PrestamoId, ValorPagado));
+        this.pago.Detalle.Add(new PagosDetalles(Id, PagoId, PrestamoId, ValorPagado));
         Id = 0;
         PagoId = 0;
         PrestamoId = 0;
@@ -252,4 +279,6 @@
         notificationService.Notify(message);
 
     }
+
+
 }

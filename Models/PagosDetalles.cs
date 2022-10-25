@@ -11,24 +11,24 @@ public class PagosDetalles
     [Required(ErrorMessage = "El Prestamo Id es requerido")]
     public int PrestamoId { get; set; }
 
-    [Required(ErrorMessage = "El Valor Pagado es requerido")]
+    [Range(minimum: 0.01, maximum: 1000000000000, ErrorMessage = "Indique el valor a pagar")]
     public int ValorPagado { get; set; }
 
     public PagosDetalles()
     {
-        Id = 0;
-        PagoId = 0;
-        PrestamoId = 0;
-        ValorPagado = 0;
+        this.Id = 0;
+        this.PagoId = 0;
+        this.PrestamoId = 0;
+        this.ValorPagado = 0;
 
     }
 
     public PagosDetalles(int Id,int PagoId, int PrestamoId,int ValorPagado)
     {
         Id = 0;
-        PagoId = PagoId;
-        PrestamoId = PrestamoId;
-        ValorPagado = ValorPagado;
+        PagoId = 0;
+        PrestamoId = 0;
+        ValorPagado = 0;
 
     }
 }

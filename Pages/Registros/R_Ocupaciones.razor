@@ -4,26 +4,26 @@
 @inject OcupacionesBLL OcupacionesBLL
 @inject NotificationService notificationService
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
 <EditForm Model="ocupacion" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
-    <ValidationSummary />
-    <div class="card">
+
+    <div class="card shadow-lg">
         <div class="card-header">
-            <h3>Registro</h3>
+            <h3>Registro de Ocupaciones</h3>
+
         </div>
         <div class="card-body">
-
             @*OcupacionId*@
-            <div class="form-r ow align-items-center">
+            <div class="form-row align-items-center">
                 <div class="col">
                     <div class="form-group">
                         <label>OcupacionId</label>
                         <div class="input-group">
                             <InputNumber @bind-Value="ocupacion.OcupacionId" class="form-control col-4" />
                             <div class="input-group-append">
-                                <button type="button" class="btn btn-primary input-group-text"
-                                    @onclick="Buscar">Buscar</button>
+                                <button type="button" class="btn btn-primary input-group-text" @onclick="Buscar">
+                                    <i class="oi oi-magnifying-glass" /> Buscar
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -43,32 +43,52 @@
                 <InputNumber @bind-Value="ocupacion.Salario" class="form-control" />
                 <ValidationMessage For="@(() => ocupacion.Salario)" />
             </div>
-
         </div>
+        <h1>
+            <span class="text-danger">@mensaje</span>
+        </h1>
+
         <div class="card-footer">
             <div class="form-group text-center" display: inline-block>
-                <button type="button" class="btn btn-lg btn-primary bi bi-file-earmark-plus" @onclick="Nuevo"> Nuevo</button>
-                <button type="submit" class="btn btn-lg btn-success bi bi-file-earmark"> Guardar</button>
-                <button  type="button" class="btn btn-lg btn-danger bi bi-trash"  @onclick="Eliminar" > Eliminar</button> 
+                <button type="button" class="btn btn-lg btn-primary" @onclick="Nuevo">
+                    <i class="oi oi-file" /> Nuevo
+                </button>
+                <button type="submit" class="btn btn-lg btn-success">
+                    <i class="oi oi-document" /> Guardar
+                </button>
+                <button type="button" class="btn btn-lg btn-danger" @onclick="Eliminar">
+                    <i class="oi oi-trash" /> Eliminar
+                </button>
             </div>
         </div>
     </div>
 </EditForm>
 
 @code {
-
     [Parameter]
     public int OcupacionId { get; set; }
+
     public Ocupaciones ocupacion { get; set; } = new Ocupaciones();
+
     public String mensaje { get; set; } = "";
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         if (OcupacionId > 0)
         {
-            
             this.ocupacion.OcupacionId = OcupacionId;
-            this.Buscar();
+            await this.Buscar();
+        }
+    }
+
+    private async Task Buscar()
+    {
+        if (ocupacion.OcupacionId > 0)
+        {
+            var encontrado = await OcupacionesBLL.Buscar(ocupacion.OcupacionId);
+
+            if (encontrado != null)
+                this.ocupacion = encontrado;
         }
     }
 
@@ -78,15 +98,11 @@
         ocupacion = new Ocupaciones();
     }
 
-    bool Validar()
+    public async Task Guardar()
     {
-        return ocupacion.Descripcion.Contains(".");
-    }
+        bool guardo;
 
-    public void Guardar()
-    {
-
-        bool guardo = OcupacionesBLL.Guardar(ocupacion);
+        guardo = await OcupacionesBLL.Guardar(ocupacion);
 
         if (guardo)
         {
@@ -96,29 +112,24 @@
                 Severity = NotificationSeverity.Success,
                 Summary = "Guardado correctamente"
             });
-
             Nuevo();
         }
     }
-    private void Buscar()
-    {
-        if (ocupacion.OcupacionId > 0)
-        {
-            var encontrado = OcupacionesBLL.Buscar(ocupacion.OcupacionId);
 
-            if (encontrado != null)
-                this.ocupacion = encontrado;
-        }
-    }
-
-    public void Eliminar()
+    public async void Eliminar()
     {
         bool elimino;
 
-        elimino = OcupacionesBLL.Eliminar(ocupacion);
+        elimino = await OcupacionesBLL.Eliminar(ocupacion);
 
         if (elimino)
         {
+            ShowNotification(
+            new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Eliminado correctamente"
+            });
             Nuevo();
 
         }
@@ -129,4 +140,5 @@
         notificationService.Notify(message);
 
     }
+
 }

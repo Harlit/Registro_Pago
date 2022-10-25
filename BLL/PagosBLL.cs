@@ -9,91 +9,114 @@ public class PagosBLL
     {
         _contexto = contexto;
     }
-
-    public bool Existe(int pagoId)
+    public async Task<bool> Existe(int pagosId)
     {
-        return _contexto.Pagos.Any(o => o.PagoId == pagoId);
+        return await _contexto.Pagos.AnyAsync(o => o.PagoId == pagosId);
     }
 
-    private bool Insertar(Pagos pago)
+    public async Task<bool> Guardar(Pagos pagos)
     {
-        _contexto.Pagos.Add(pago);
-        return _contexto.SaveChanges() > 0;
+        var existe = await Existe(pagos.PagoId);
+
+        if (!existe)
+            return await this.Insertar(pagos);
+        else
+            return await this.Modificar(pagos);
     }
 
-    private bool Modificar(Pagos pago)
+    private async Task<bool> Insertar(Pagos pago)
     {
-        bool paso = false;
+        await _contexto.Pagos.AddAsync(pago);
 
-        try
+        foreach (var item in pago.Detalle)
         {
-            _contexto.Database.ExecuteSqlRaw($"Delete FROM PagosDetalles where PagoId={pago.PagoId}");
+            var prestamo = await _contexto.Prestamos.FindAsync(item.PrestamoId);
+            prestamo!.Balance -= item.ValorPagado;
+        }
 
-            foreach (var anterior in pago.PagosDetalles)
+        var persona = await _contexto.Personas.FindAsync(pago.PersonaId);
+        persona!.Balance -= pago.Monto;
+
+        var insertados = await _contexto.SaveChangesAsync();
+
+        return insertados > 0;
+    }
+    private async Task<bool> Modificar(Pagos pagoActual)
+    {
+        var pagoAnterior = await _contexto.Pagos
+             .Where(p => p.PagoId == pagoActual.PagoId)
+             .AsNoTracking()
+             .SingleOrDefaultAsync();
+
+        
+        var personaAnterior = await _contexto.Personas.FindAsync(pagoAnterior!.PersonaId);
+        personaAnterior!.Balance += pagoAnterior.Monto;
+
+        foreach (var item in pagoAnterior.Detalle)
+        {
+            var prestamos = await _contexto.Prestamos.FindAsync(item.PrestamoId);
+            prestamos!.Balance += item.ValorPagado;
+        }
+
+        await _contexto.Database.ExecuteSqlRawAsync($"Delete FROM PagosDetalle Where PagoId = {pagoActual.PagoId}");
+
+            foreach (var anterior in pago.Detalle)
             {
                 _contexto.Entry(anterior).State = EntityState.Added;
             }
 
-            _contexto.Entry(pago).State = EntityState.Modified;
+        var persona = await _contexto.Personas.FindAsync(pagoActual!.PersonaId);
+        persona!.Balance -= pagoActual.Monto;
 
-            paso = _contexto.SaveChanges() > 0;
-        }
-        catch (Exception)
-        {
-            throw;
-        }
+        _contexto.Entry(pagoActual).State = EntityState.Modified;
 
-        finally
-        {
-            _contexto.Dispose();
-        }
+        var cantidad = await _contexto.SaveChangesAsync();
+
+        _contexto.Entry(pagoActual).State = EntityState.Detached;
+
+        return cantidad > 0;
+    }
+
+    public async Task<bool> Eliminar(Pagos pago)
+    {
 
         return paso;
     }
 
-    public bool Guardar(Pagos pago)
-    {
-        if (!Existe(pago.PagoId))
-            return this.Insertar(pago);
-        else
-            return this.Modificar(pago);
-    }
+        foreach (var item in pago.Detalle)
+        {
+            var prestamos = await _contexto.Prestamos.FindAsync(item.PrestamoId);
+            prestamos!.Balance += item.ValorPagado;
+        }
 
-    public bool Eliminar(Pagos pago)
-    {
         _contexto.Entry(pago).State = EntityState.Deleted;
-        return _contexto.SaveChanges() > 0;
+
+        var cantidad = await _contexto.SaveChangesAsync();
+
+        return cantidad > 0;
     }
 
-    public Pagos Buscar(int id)
+    public async Task<Pagos?> Buscar(int pagoId)
     {
-      
-        Pagos pago = new Pagos();
-
-        // Pagos pago;
+        Pagos pago;
 
         try
         {
-            pago = _contexto.Pagos.Include(x => x.PagosDetalles)
-            .Where(p => p.PagoId == id)
-            .SingleOrDefault();
+            pago = _contexto.Pagos.Include(x => x.Detalle).Where(p => p.PagoId == id).SingleOrDefault();
         }
         catch (Exception)
         {
             throw;
         }
-
-        finally{
-            _contexto.Dispose();
-        }
         return pago;
     }
-    public List<Pagos> GetList(Expression<Func<Pagos, bool>> Criterio)
+
+    public async Task<List<Pagos>> GetList(Expression<Func<Pagos, bool>> Criterio)
     {
-        return _contexto.Pagos
-            .AsNoTracking()
+        return await _contexto.Pagos
             .Where(Criterio)
-            .ToList();
+            .AsNoTracking()
+            .ToListAsync();
     }
 
 }
