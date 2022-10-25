@@ -1,89 +1,94 @@
-@page "/Prestamo"
-@page "/Prestamo/{PrestamoId:int}"
+@page "/prestamo"
+@page "/prestamos/{PrestamoId:int}"
 
-@inject PrestamosBLL PrestamosBLL
-@inject PersonasBLL PersonasBLL
+@inject PrestamosBLL prestamosBLL
+@inject PersonasBLL personasBLL
 @inject NotificationService notificationService
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
-<EditForm Model = "prestamo" OnValidSubmit="Guardar">
+<EditForm Model="prestamo" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
-    <ValidationSummary />
-    <div class="card">
+    <div class="card shadow-lg">
         <div class="card-header">
-            <h3>Registro Prestamos</h3>
+            <h3>Registro de Prestamos</h3>
         </div>
         <div class="card-body">
+            <div class="container overflow-hidden">
+                <div class="row gy-6">
 
-            @*PrestamoId*@
-            <div class="form-r ow align-items-center">
-                <div class="col">
-                    <div class="form-group">
-                        <label>Prestamo ID</label>
-                        <div class="input-group">
-                            <InputNumber @bind-Value="prestamo.PrestamoId" class="form-control col-4" />
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-primary input-group-text bi bi-search"
-                                    @onclick="Buscar"> Buscar</button>
+                    @*PrestamoId*@
+                    <label>Prestamo ID</label>
+                    <div class="form-r ow align-items-center">
+                        <div class="col">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <InputNumber @bind-Value="prestamo.PrestamoId" class="form-control" />
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-primary" type="button" @onclick="Buscar"> <i
+                                                class="oi oi-magnifying-glass" /> </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    @*Fecha*@
+                    <div class="mb-3">
+                        <label>Fecha de Inicio</label>
+                        <InputDate @bind-Value="prestamo.Fecha" class="form-control" />
+                        <ValidationMessage For="@(() => prestamo.Fecha)" />
+                    </div>
+
+                    @*Vence*@
+                    <div class="mb-3">
+                        <label>Fecha De Vencimiento</label>
+                        <InputDate readonly="true" @bind-Value="prestamo.Vence" class="form-control" />
+                        <ValidationMessage For="@(() => prestamo.Vence)" />
+                    </div>
+
+                    @*PersonaId*@
+                    <div class="mb-3">
+                        <label>Persona</label>
+                        <InputSelect class="form-select" @bind-Value="prestamo.PersonaId">
+                            <option value="0" disabled> Seleccione uno </option>
+                            @foreach (var persona in listaPersonas)
+                            {
+                                <option value="@persona.PersonaId"> @persona.NombreCompleto</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => prestamo.PersonaId)" class="form-control" />
+                    </div>
+
+                    @*Concepto*@
+                    <div class="mb-3">
+                        <label>Concepto</label>
+                        <InputText @bind-Value="prestamo.Concepto" class="form-control" />
+                        <ValidationMessage For="@(() => prestamo.Concepto)" />
+                    </div>
+
+
+                    @*Monto*@
+                    <div class="mb-3">
+                        <label>Monto</label>
+                        <InputNumber @bind-Value="prestamo.Monto" class="form-control" />
+                        <ValidationMessage For="@(() => prestamo.Monto)" />
+                    </div>
+
+
+                    @*Balance*@
+                    <div class="mb-3">
+                        <label>Balance</label>
+                        <InputNumber @bind-Value="prestamo.Balance" class="form-control" />
+                        <ValidationMessage For="@(() => prestamo.Balance)" />
+                    </div>
                 </div>
             </div>
-
-            @*Fecha*@
-            <div class="form-group">
-                <label>Fecha</label>
-                <InputDate @bind-Value="prestamo.Fecha" class="form-control" />
-                <ValidationMessage For="@(() => prestamo.Fecha)" />
-            </div>
-
-            @*Vence*@
-            <div class="form-group">
-                <label>Vence</label>
-                <InputDate @bind-Value="prestamo.Vence" class="form-control" />
-                <ValidationMessage For="@(() => prestamo.Vence)" />
-            </div>
-
-            @*PersonaId*@
-            <div class="form-group col">
-                    <label >PersonaId</label>
-                    <InputSelect class="form-select" @bind-Value="prestamo.PersonaId">
-                        @foreach (Personas prestamo in Informacion)
-                        {
-                            <option value="@prestamo.PersonaId">@prestamo.PersonaId (ID: @prestamo.PersonaId)</option>
-                        }
-                    </InputSelect>
-                </div>
-
-            @*Concepto*@
-            <div class="form-group">
-                <label>Concepto</label>
-                <InputText @bind-Value="prestamo.Concepto" class="form-control" />
-                <ValidationMessage For="@(() => prestamo.Concepto)" />
-            </div>
-
-            @*Monto*@
-            <div class="form-group">
-                <label>Monto</label>
-                <InputNumber @bind-Value="prestamo.Monto" class="form-control" />
-                <ValidationMessage For="@(() => prestamo.Monto)" />
-            </div>
-
-            @*Balance*@
-            <div class="form-group">
-                <label>Balance</label>
-                <InputNumber @bind-Value="prestamo.Balance" class="form-control" />
-                <ValidationMessage For="@(() => prestamo.Balance)" />
-            </div>
-
         </div>
-        <div class="card-footer">
-            <div class="form-group text-center" display: inline-block>
-                <button type="button" class="btn btn-lg btn-primary bi bi-file-earmark-plus" @onclick="Nuevo">
-                    Nuevo</button>
-                <button type="submit" class="btn btn-lg btn-success bi bi-file-earmark"> Guardar</button>
-                <button type="button" class="btn btn-lg btn-danger bi bi-trash" @onclick="Eliminar"> Eliminar</button>
+
+        <div class="card-footer d-flex justify-content-center">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-primary" @onclick="Nuevo"> <i class="oi oi-file" /> Nuevo</button>
+                <button type="submit" class="btn btn-success"> <i class="oi oi-document" /> Guardar</button>
+                <button type="button" class="btn btn-danger"><i class="oi oi-trash" /> Eliminar</button>
             </div>
         </div>
     </div>
@@ -92,38 +97,64 @@
 @code {
     [Parameter]
     public int PrestamoId { get; set; }
+
+    public List<Personas> listaPersonas { get; set; } = new List<Personas>();
     public Prestamos prestamo { get; set; } = new Prestamos();
-    public String mensaje { get; set; } = "";
-    public List<Personas> Informacion { get; set; } = new List<Personas>();
 
-
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        Informacion = PersonasBLL.GetList(o => true);
+        listaPersonas = await personasBLL.GetList(p => true);
         if (PrestamoId > 0)
         {
             this.prestamo.PrestamoId = PrestamoId;
-            this.Buscar();
+
+            await this.Buscar();
+        }
+    }
+
+    private async Task Buscar()
+    {
+        if (prestamo.PrestamoId > 0)
+        {
+            var encontrado = await prestamosBLL.Buscar(prestamo.PrestamoId);
+            if (encontrado != null)
+                this.prestamo = encontrado;
+            else
+                ShowNotification(
+                new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "No fue encontrado"
+                });
+            
         }
     }
 
     public void Nuevo()
     {
-        mensaje = "";
         prestamo = new Prestamos();
+        prestamo.Fecha = DateTime.Now;
     }
 
     bool Validar()
     {
-        return prestamo.Concepto.Contains(".");
+        return true;
     }
 
-    public void Guardar()
+    public async void Guardar()
     {
+        if (!Validar())
+        {
+            ShowNotification(
+            new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Hay errores por favor validar"
+            });
+        }
 
-        bool guardo = PrestamosBLL.Guardar(prestamo);
-
-        if (guardo)
+        var guardo = await prestamosBLL.Guardar(this.prestamo);
+        if  (guardo)
         {
             ShowNotification(
             new NotificationMessage
@@ -131,27 +162,22 @@
                 Severity = NotificationSeverity.Success,
                 Summary = "Guardado correctamente"
             });
-
             Nuevo();
         }
-    }
-    private void Buscar()
-    {
-        if (prestamo.PrestamoId > 0)
+        else
         {
-            var encontrado = PrestamosBLL.Buscar(prestamo.PrestamoId);
-
-            if (encontrado != null)
-                this.prestamo = encontrado;
+            ShowNotification(
+            new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "No se Guardo correctamente"
+            });
         }
     }
 
-    public void Eliminar()
+    public async void Eliminar()
     {
-        bool elimino;
-
-        elimino = PrestamosBLL.Eliminar(prestamo);
-
+        var elimino = await prestamosBLL.Eliminar(prestamo);
         if (elimino)
         {
             ShowNotification(
@@ -163,11 +189,21 @@
             Nuevo();
 
         }
-    }
+        else
+        {
+            ShowNotification(
+            new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "No fue eliminado correctamente"
+            });
+        }
 
-    void ShowNotification(NotificationMessage message)
-    {
-        notificationService.Notify(message);
+        void ShowNotification(NotificationMessage message)
+        {
+            notificationService.Notify(message);
+
+        }
 
     }
 }
