@@ -126,7 +126,7 @@
                     Severity = NotificationSeverity.Success,
                     Summary = "No fue encontrado"
                 });
-            
+
         }
     }
 
@@ -154,7 +154,7 @@
         }
 
         var guardo = await prestamosBLL.Guardar(this.prestamo);
-        if  (guardo)
+        if (guardo)
         {
             ShowNotification(
             new NotificationMessage
