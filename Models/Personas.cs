@@ -25,4 +25,6 @@ public class Personas
     public DateTimeOffset FechaNacimiento { get; set; }
 
     public int OcupacionId { get; set; }
+
+    public double Balance { get; set; }
 }

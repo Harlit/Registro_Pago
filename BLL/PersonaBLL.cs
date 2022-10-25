@@ -10,50 +10,62 @@ public class PersonasBLL
         _contexto = contexto;
     }
 
-    public bool Existe(int personaId)
+    public async Task<bool> Existe(int id)
     {
-        return _contexto.Personas.Any(o => o.PersonaId == personaId);
+        return await _contexto.Personas.AnyAsync(p => p.PersonaId == id);
     }
 
-    private bool Insertar(Personas persona)
+    public async Task<bool> Guardar(Personas persona)
     {
-        _contexto.Personas.Add(persona);
-        return _contexto.SaveChanges() > 0;
+        var existe = await Existe(persona.OcupacionId);
+
+        if (!existe)
+            return await this.Insertar(persona);
+        else
+            return await this.Modificar(persona);
     }
 
-    private bool Modificar(Personas persona)
+    private async Task<bool> Insertar(Personas persona)
+    {
+        await _contexto.Personas.AddAsync(persona);
+
+        var cantidad = await _contexto.SaveChangesAsync();
+
+        return cantidad > 0;
+    }
+
+    private async Task<bool> Modificar(Personas persona)
     {
         _contexto.Entry(persona).State = EntityState.Modified;
-        return _contexto.SaveChanges() > 0;
+
+        var cantidad = await _contexto.SaveChangesAsync();
+
+        return cantidad > 0;
     }
 
-    public bool Guardar(Personas persona)
-    {
-        if (!Existe(persona.PersonaId))
-            return this.Insertar(persona);
-        else
-            return this.Modificar(persona);
-    }
-
-    public bool Eliminar(Personas persona)
+    public async Task<bool> Eliminar(Personas persona)
     {
         _contexto.Entry(persona).State = EntityState.Deleted;
-        return _contexto.SaveChanges() > 0;
+        var cantidad = await _contexto.SaveChangesAsync();
+
+        return cantidad > 0;
     }
 
-    public Personas? Buscar(int personaId)
+    public async Task<Personas?> Buscar(int id)
     {
-        return _contexto.Personas
-        .Where(o => o.PersonaId == personaId)
-        .AsNoTracking()
-        .SingleOrDefault();
+        var ocupacion = await _contexto.Personas
+                .Where(p => p.PersonaId == id)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
+
+        return ocupacion;
     }
 
-    public List<Personas> GetList(Expression<Func<Personas, bool>> Criterio)
+    public async Task<List<Personas>> GetList(Expression<Func<Personas, bool>> Criterio)
     {
-        return _contexto.Personas
-            .AsNoTracking()
+        return await _contexto.Personas
             .Where(Criterio)
-            .ToList();
+            .AsNoTracking()
+            .ToListAsync();
     }
 }
