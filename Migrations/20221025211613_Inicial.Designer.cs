@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RegistroPago.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20221016174630_“Ipersona")]
-    partial class Ipersona
+    [Migration("20221025211613_Inicial")]
+    partial class Inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -52,7 +52,7 @@ namespace RegistroPago.Migrations
                     b.Property<int>("Monto")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PersonaID")
+                    b.Property<int>("PersonaId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("PagoId");
@@ -60,11 +60,36 @@ namespace RegistroPago.Migrations
                     b.ToTable("Pagos");
                 });
 
+            modelBuilder.Entity("PagosDetalles", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PagoId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PrestamoId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ValorPagado")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PagoId");
+
+                    b.ToTable("PagosDetalles");
+                });
+
             modelBuilder.Entity("Personas", b =>
                 {
                     b.Property<int>("PersonaId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<double>("Balance")
+                        .HasColumnType("REAL");
 
                     b.Property<int>("Celular")
                         .HasColumnType("INTEGER");
@@ -93,6 +118,50 @@ namespace RegistroPago.Migrations
                     b.HasKey("PersonaId");
 
                     b.ToTable("Personas");
+                });
+
+            modelBuilder.Entity("Prestamos", b =>
+                {
+                    b.Property<int>("PrestamoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Balance")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Concepto")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset>("Fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Monto")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PersonaId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset>("Vence")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("PrestamoId");
+
+                    b.ToTable("Prestamos");
+                });
+
+            modelBuilder.Entity("PagosDetalles", b =>
+                {
+                    b.HasOne("Pagos", null)
+                        .WithMany("Detalle")
+                        .HasForeignKey("PagoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Pagos", b =>
+                {
+                    b.Navigation("Detalle");
                 });
 #pragma warning restore 612, 618
         }

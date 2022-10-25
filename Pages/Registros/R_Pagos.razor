@@ -1,4 +1,4 @@
-@page "/pago"
+@page "/pago_Registro"
 @page "/pago/{PagoId:int}"
 
 @inject NotificationService notificationService
@@ -15,7 +15,7 @@
         </div>
 
         <div class="card-body">
-            @*Pagos*@
+            @*Pago id*@
             <div class="form-row align-items-center">
                 <div class="col">
                     <div class="form-group">
@@ -40,6 +40,7 @@
                 <ValidationMessage For="@(() => pagos.Fecha)" />
             </div>
 
+            @*Persona ID*@
             <div class="mb-3">
                 <label>PersonaId </label>
                 <div class="input-group mb-3">
@@ -53,7 +54,6 @@
                     <ValidationMessage For="@(()=>pagos.PersonaId)" />
                 </div>
             </div>
-
             @*Concepto*@
             <div class="mb-3">
                 <label>Concepto</label>
@@ -62,7 +62,7 @@
             </div>
 
             @*PAGOS DETALLE*@
-            <fieldset class="border-success border border-1">
+            <fieldset class="border-success">
                 <h3>Detalle de Pago</h3>
                 <div class="row">
                     @*PrestamoId *@

@@ -86,6 +86,9 @@ namespace RegistroPago.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<double>("Balance")
+                        .HasColumnType("REAL");
+
                     b.Property<int>("Celular")
                         .HasColumnType("INTEGER");
 
