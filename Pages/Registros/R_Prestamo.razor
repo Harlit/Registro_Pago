@@ -23,8 +23,7 @@
                                 <div class="input-group">
                                     <InputNumber @bind-Value="prestamo.PrestamoId" class="form-control" />
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-primary" type="button" @onclick="Buscar"> <i
-                                                class="oi oi-magnifying-glass" /> </button>
+                                        <button class="btn btn-outline-primary" type="button" @onclick="Buscar"> <i class="oi oi-magnifying-glass" /> </button>
                                     </div>
                                 </div>
                             </div>
@@ -52,7 +51,7 @@
                             <option value="0" disabled> Seleccione uno </option>
                             @foreach (var persona in listaPersonas)
                             {
-                                <option value="@persona.PersonaId"> @persona.NombreCompleto</option>
+                                    <option value="@persona.PersonaId"> @persona.NombreCompleto</option>
                             }
                         </InputSelect>
                         <ValidationMessage For="@(() => prestamo.PersonaId)" class="form-control" />
@@ -120,13 +119,12 @@
             if (encontrado != null)
                 this.prestamo = encontrado;
             else
-                ShowNotification(
-                new NotificationMessage
-                {
-                    Severity = NotificationSeverity.Success,
-                    Summary = "No fue encontrado"
-                });
-            
+            ShowNotification(
+            new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Registro no encontrado"
+            });             
         }
     }
 
@@ -148,9 +146,10 @@
             ShowNotification(
             new NotificationMessage
             {
-                Severity = NotificationSeverity.Error,
-                Summary = "Hay errores por favor validar"
-            });
+                Severity = NotificationSeverity.Success,
+                Summary = "No fue Validado "
+            });            
+            return;
         }
 
         var guardo = await prestamosBLL.Guardar(this.prestamo);
@@ -169,9 +168,9 @@
             ShowNotification(
             new NotificationMessage
             {
-                Severity = NotificationSeverity.Error,
-                Summary = "No se Guardo correctamente"
-            });
+                Severity = NotificationSeverity.Success,
+                Summary = "No fue guardado correctamente"
+            });        
         }
     }
 
@@ -194,16 +193,16 @@
             ShowNotification(
             new NotificationMessage
             {
-                Severity = NotificationSeverity.Error,
-                Summary = "No fue eliminado correctamente"
-            });
+                Severity = NotificationSeverity.Success,
+                Summary = "No Fue Eliminado Correctamente"
+            });        
         }
+    }
 
-        void ShowNotification(NotificationMessage message)
-        {
-            notificationService.Notify(message);
-
-        }
+     void ShowNotification(NotificationMessage message)
+    {
+        notificationService.Notify(message);
 
     }
+
 }
