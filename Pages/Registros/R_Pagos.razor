@@ -77,11 +77,11 @@
                             }
                         </InputSelect>
                     </div>
-
-                    @* PagosDetalles *@
-
-                    <div class="card-header">
-                        <h3>Pagos Detalle</h3>
+                    @*ValorPagado *@
+                    <div class="col-2">
+                        <label>Valor Pagado</label>
+                        <InputNumber class="form-control" @bind-Value="detalle.ValorPagado"></InputNumber>
+                        <ValidationMessage For="@(() => detalle.ValorPagado)"></ValidationMessage>
                     </div>
 
                     @*Boton agregar *@
@@ -96,55 +96,35 @@
 
             </fieldset>
 
-                            @* ValorPagado *@
-                            <div class="form-group">
-                                <label>Valor Pagado</label>
-                                <InputNumber class="form-control" @bind-Value="ValorPagado" />
-                                <ValidationMessage For="@(() => ValorPagado)" />
-                            </div>
-
-
-                            <button type="button" class="btn btn-success col" @onclick="AgregarDetalle">
-                                Agregar Detalle
-                            </button>
-
-                        </div>
-                        <br>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Id</th>
-                                    <th>Pago Id</th>
-                                    <th>Prestamo Id</th>
-                                    <th>Valor Pagado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in pago.Detalle)
-                                {
-                                    <tr>
-                                        <td>@item.Id</td>
-                                        <td>@item.PagoId</td>
-                                        <td>@item.PrestamoId</td>
-                                        <td>@item.ValorPagado</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </form>
-
-
-
-                    <div class="card-footer d-flex justify-content-center">
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-primary" @onclick="Nuevo"> <i class="oi oi-file" />
-                                Nuevo</button>
-                            <button type="submit" class="btn btn-success"> <i class="oi oi-document" /> Guardar</button>
-                            <button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="oi oi-trash" />
-                                Eliminar</button>
-                        </div>
+            @*Tabla de detalles*@
+            <hr />
+            <table class="table table-bordered table-light">
+                <thead class="thead">
+                    <tr class="table">
+                        <th>PrestamoId</th>
+                        <th>Valor Pagado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var detalle in pagos.Detalle)
+                    {
+                        <tr>
+                            <td>@detalle.PrestamoId</td>
+                            <td>@detalle.ValorPagado</td>
+                            <td> <button @onclick="@(() => pagos.Detalle.Remove(detalle) )"><i class="oi oi-trash" />
+                                    Eliminar</button> </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="row justify-content-between">
+                <div class="col-4">
+                    <label>Monto Total</label>
+                    <div class="input-group mb-3">
+                        <span class="form-control">@pagos.Monto</span>
                     </div>
                 </div>
+            </div>
 
             <hr />
 
@@ -177,19 +157,7 @@
     protected override async Task OnInitializedAsync()
     {
 
-    [Parameter]
-    public int PagoId { get; set; }
-    public Pagos pago { get; set; } = new Pagos();
-    public String mensaje { get; set; } = "";
-    public List<Personas> Informacion { get; set; } = new List<Personas>();
-    public int Id { get; set; }
-    public List<Pagos> Detalles { get; set; } = new List<Pagos>();
-    public int PrestamoId { get; set; }
-    public int ValorPagado { get; set; }
-
-    protected override void OnInitialized()
-    {
-        Informacion = PersonasBLL.GetList(o => true);
+        listPersonas = await personasBLL.GetList(p => true);
         if (PagoId > 0)
         {
             this.pagos.PagoId = PagoId;
@@ -263,16 +231,6 @@
 
         }
     }
-
-    private void AgregarDetalle()
-    {
-        this.pago.Detalle.Add(new PagosDetalles(Id, PagoId, PrestamoId, ValorPagado));
-        Id = 0;
-        PagoId = 0;
-        PrestamoId = 0;
-        ValorPagado = 0;
-    }
-
 
     void ShowNotification(NotificationMessage message)
     {
