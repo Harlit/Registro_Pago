@@ -1,60 +1,63 @@
-@page "/Consulta_Prestamo"
-@inject PrestamosBLL PrestamosBLL;
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+@page "/prestamos"
+@inject PrestamosBLL prestamosBLL
 
-
-<EditForm Model="Informacion">
-    <DataAnnotationsValidator />
-        <div class="card-body">
-            <form>
-                <div style="text-align: center">
-
-                    <button type="button" class="btn btn-lg btn-primary bi bi-search" @onclick="Buscar" > Consultar Prestamos</button>
-
-                </div>
-            </form>
+<div class="card">
+    <div class="container">
+        <div class="mb-3">
+            <div class="input-group mb-4">
+                <input type="date" @bind="fecha">
+                <input type="date" @bind="fecha2">
+                <button @onclick="Buscar" type="button"> <i class="oi oi-magnifying-glass"></i></button>
+            </div>
+            <div class="d-grid gap-2">
+                <button class="btn btn-primary" type="button" >Todos los Registros</button>
+            </div>
         </div>
-        
-        <table style="width:100%">
+
+        <table class="table table-success table-striped">
+
             <thead>
                 <tr>
-                    <th>PrestamoID</th>
-                    <th style="text-align: center;">Fecha</th>
-                    <th style="text-align: center;">Vence</th>
-                    <th>PersonaID</th>
-                    <th style="text-align: center;">Concepto</th>
-                    <th style="text-align: center;">Monto</th>
-                    <th style="text-align: center;">Balance</th>
+                    <th>PrestamosId</th>
+                    <th>Fecha Prestamo</th>
+                    <th>Fecha Vencimiento</th>
+                    <th>Concepto</th>
+                    <th>Monto</th>
+                    <th>Balance</th>
+                    <th>PersonaId</th>
+                    <th></th>
                 </tr>
             </thead>
-                <tbody>
-                @foreach (var item in Informacion)
+            <tbody>
+                @foreach (var prestamo in listaPrestamos)
                 {
                     <tr>
-                        <td style="text-align: center;">@item.PrestamoId</td>
-                        <td style="text-align: center;">@item.Fecha</td>
-                        <td style="text-align: center;">@item.Vence</td>
-                        <td style="text-align: center;">@item.PersonaId</td>
-                        <td style="text-align: center;">@item.Concepto</td>
-                        <td style="text-align: center;">@item.Monto</td>
-                        <td style="text-align: center;">@item.Balance</td>
+                        <td>@prestamo.PrestamoId</td>
+                        <td>@prestamo.Fecha</td>
+                        <td>@prestamo.Vence</td>
+                        <td>@prestamo.Concepto</td>
+                        <td>@prestamo.Monto</td>
+                        <td>@prestamo.Balance</td>
+                        <td>@prestamo.PersonaId</td>
+                        <td><a href="prestamo/@prestamo.PrestamoId">Ver</a></td>
                     </tr>
                 }
-                </tbody>
-                
+
+            </tbody>
+
         </table>
-    
-</EditForm>
+    </div>
+</div>
 
-@code {
+@code
+{
+    public DateTime fecha { get; set; } = new DateTime();
+    public DateTime fecha2 { get; set; } = new DateTime();
+    public string Criterio { get; set; } = "";
+    public List<Prestamos> listaPrestamos { get; set; } = new List<Prestamos>();
 
-    public Prestamos prestamo { set; get; } = new Prestamos();
-    public string Filtro { get; set; }
-    public string Criterio { get; set; }
-    public List<Prestamos> Informacion { get; set; } = new List<Prestamos>();
-    public void Buscar()
+    public async Task Buscar()
     {
-        Informacion = PrestamosBLL.GetList(o => true);
+        listaPrestamos = await prestamosBLL.GetList(p => true);
     }
-
 }

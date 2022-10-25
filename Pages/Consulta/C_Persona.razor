@@ -1,58 +1,69 @@
-@page "/Consulta_Persona"
-@inject PersonasBLL PersonasBLL;
+@page "/personas"
 
-<EditForm Model="Informacion">
+@inject PersonasBLL personasBLL
+
+<EditForm Model="listaPersonas">
     <DataAnnotationsValidator />
-    <div class="card-body">
-        <form>
-            <div>
 
-                <button type="button" @onclick="Buscar">Buscar Personas</button>
-
-            </div>
-        </form>
+    <div class="row">
+        <select class="form-control" @bind="Filtro">
+            <option value="1">PersonaId</option>
+            <option value="2">Nombres</option>
+        </select>
     </div>
-    <table class="table">
+
+    <label class="form-control">Criterio</label>
+    <input type="text" class="form-control" @bind="Criterio">
+
+    <div>
+        <button type="button" @onclick="Buscar">
+            <i class="oi oi-magnifying-glass" /> Buscar
+        </button>
+    </div>
+
+    <table class="table table-striped table-hover">
+
         <thead>
             <tr>
                 <th>PersonaId</th>
-                <th>Nombre</th>
-                <th>Telefono</th>
-                <th>Celular</th>
-                <th>Email</th>
-                <th>Direccion</th>
+                <th>Nombres</th>
                 <th>Fecha Nacimiento</th>
+                <th>Email</th>
+                <th>Telefono</th>
+                <th>Balance</th>
                 <th>OcupacionId</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Informacion)
+            @foreach (var persona in listaPersonas)
             {
                 <tr>
-                    <td>@item.PersonaId</td>
-                    <td>@item.NombreCompleto</td>
-                    <td>@item.Telefono</td>
-                    <td>@item.Celular</td>
-                    <td>@item.Email</td>
-                    <td>@item.Direccion</td>
-                    <td>@item.FechaNacimiento</td>
-                    <td>@item.OcupacionId</td>
+                    <td>@persona.PersonaId</td>
+                    <td>@persona.NombreCompleto</td>
+                    <td>@persona.FechaNacimiento</td>
+                    <td>@persona.Email</td>
+                    <td>@persona.Telefono</td>
+                    <td>@persona.Balance</td>
+                    <td>@persona.OcupacionId</td>
+                    <td><a href="persona/@persona.PersonaId">Ver</a></td>
                 </tr>
             }
-        </tbody>
-    </table>
 
+        </tbody>
+
+    </table>
 </EditForm>
 
-@code {
+@code
+{
+    public string Filtro { get; set; } = "";
+    public string Criterio { get; set; } = "";
 
-    public Personas persona { set; get; } = new Personas();
-    public string Filtro { get; set; }
-    public string Criterio { get; set; }
-    public List<Personas> Informacion { get; set; } = new List<Personas>();
-    public void Buscar()
+    public List<Personas> listaPersonas { get; set; } = new List<Personas>();
+    public async Task Buscar()
     {
-        Informacion = PersonasBLL.GetList(o => true);
+        listaPersonas = await personasBLL.GetList(o => true);
     }
 
 }
