@@ -1,51 +1,59 @@
-<h3>Bienvenido a su consulta de ocupaciones</h3>
-<br>
-<br>
-@page "/Consulta_Ocupaciones"
-@inject OcupacionesBLL ocupacionesBLL;
+@page "/ocupaciones"
+@inject OcupacionesBLL ocupacionBLL;
 
-<EditForm Model="Informacion">
+<EditForm Model="lista">
     <DataAnnotationsValidator />
-        <div class="card-body">
-            <form>
-                <div>
+    <div class="row">
+        <select class="form-select">
+            <option value="0" disabled> Seleccione una opcion</option>
+            <option value="1">OcupacionId</option>
+            <option value="2">Descripcion</option>
+        </select>
+    </div>
 
-                    <button type="button" @onclick="Buscar">Buscar Ocupaciones</button>
+    <label class="form-control">Criterio</label>
+    <input type="text" class="form-control" @bind="Criterio">
 
-                </div>
-            </form>
-        </div>
-        <table class="table">
-            <thead>
+    <div>
+        <button type="button" @onclick="Buscar">
+            <i>Buscar</i>
+        </button>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>OcupacionId</th>
+                <th>Descripcion</th>
+                <th>Salario</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ocupacion in lista)
+            {
                 <tr>
-                    <th>OcupacionId</th>
-                    <th>Descripcion</th>
-                    <th>Salario</th>
+                    <td>@ocupacion.OcupacionId</td>
+                    <td>@ocupacion.Descripcion</td>
+                    <td>@ocupacion.Salario</td>
+                    <td><a href="ocupacion/@ocupacion.OcupacionId">Ver</a></td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Informacion)
-                {
-                    <tr>
-                        <td>@item.OcupacionId</td>
-                        <td>@item.Descripcion</td>
-                        <td>@item.Salario</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    
+            }
+
+        </tbody>
+
+    </table>
 </EditForm>
 
-@code {
+@code
+{
+    public string Filtro { get; set; } = "";
+    public string Criterio { get; set; } = "";
 
-    public Ocupaciones ocupacion { set; get; } = new Ocupaciones();
-    public string Filtro { get; set; }
-    public string Criterio { get; set; }
-    public List<Ocupaciones> Informacion { get; set; } = new List<Ocupaciones>();
-    public void Buscar()
+    public List<Ocupaciones> lista { get; set; } = new List<Ocupaciones>();
+    public async Task Buscar()
     {
-        Informacion = ocupacionesBLL.GetList(o => true);
+        lista = await ocupacionBLL.GetList(o => true);
     }
 
 }
