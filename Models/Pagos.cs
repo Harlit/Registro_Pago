@@ -5,18 +5,19 @@ public class Pagos
 {
     [Key]
     public int PagoId { get; set; }
-    [Required(ErrorMessage = "La Fecha es requerida")]
+
+    [Required(ErrorMessage = "La fecha es obligatoria")]
     public DateTime Fecha { get; set; }
-    [Required(ErrorMessage = "La PersonaId es requerida")]
+
+    [Required(ErrorMessage = "La Persona es Obligatoria")]
     public int PersonaId { get; set; }
-    [Required(ErrorMessage = "El Concepto es requerida")]
+
     public string? Concepto { get; set; }
-    [Required(ErrorMessage = "El Monto es requerida")]
-    public int Monto { get; set; }
+
+    public double Monto { get; set; }
 
     [ForeignKey("PagoId")]
-
-    public List<PagosDetalles> Detalle { get; set; } = new List<PagosDetalles>();
+    public virtual List<PagosDetalles> Detalle { get; set; } = new List<PagosDetalles>();
 
 }
 

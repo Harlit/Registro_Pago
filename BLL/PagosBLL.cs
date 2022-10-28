@@ -31,7 +31,7 @@ public class PagosBLL
         foreach (var item in pago.Detalle)
         {
             var prestamo = await _contexto.Prestamos.FindAsync(item.PrestamoId);
-            prestamo.Balance -= item.ValorPagado;
+            prestamo!.Balance -= item.ValorPagado;
         }
 
         var persona = await _contexto.Personas.FindAsync(pago.PersonaId);
@@ -48,33 +48,40 @@ public class PagosBLL
              .AsNoTracking()
              .SingleOrDefaultAsync();
 
-
+        //revertir el balance pagado a la persona.
         var personaAnterior = await _contexto.Personas.FindAsync(pagoAnterior!.PersonaId);
         personaAnterior!.Balance += pagoAnterior.Monto;
 
+        //revertir el balance pagado a los prestamos
         foreach (var item in pagoAnterior.Detalle)
         {
             var prestamos = await _contexto.Prestamos.FindAsync(item.PrestamoId);
             prestamos!.Balance += item.ValorPagado;
         }
 
-        await _contexto.Database.ExecuteSqlRawAsync($"Delete FROM PagosDetalles Where PagoId = {pagoActual.PagoId}");
+        //borrar el detalle anterior
+        await _contexto.Database.ExecuteSqlRawAsync($"Delete FROM PagosDetalle Where PagoId = {pagoActual.PagoId}");
 
         foreach (var item in pagoActual.Detalle)
         {
             _contexto.Entry(item).State = EntityState.Added;
 
+            //afectar los prestamos segun el nuevo valor pagado.
             var prestamo = await _contexto.Prestamos.FindAsync(item.PrestamoId);
             prestamo!.Balance -= item.ValorPagado;
         }
 
+        //reafectar el balance de la persona con el monto pagado.
         var persona = await _contexto.Personas.FindAsync(pagoActual!.PersonaId);
-        persona!.Balance -= pagoActual.Monto;
+        persona.Balance -= pagoActual.Monto;
 
+        //marcar el prestamo como modificado
         _contexto.Entry(pagoActual).State = EntityState.Modified;
 
+        //finalmente guardar
         var cantidad = await _contexto.SaveChangesAsync();
 
+        //liberar la instancia de pago para evitar que EF de error.
         _contexto.Entry(pagoActual).State = EntityState.Detached;
 
         return cantidad > 0;
@@ -84,7 +91,7 @@ public class PagosBLL
     {
 
         var persona = await _contexto.Personas.FindAsync(pago.PersonaId);
-        persona!.Balance += pago.Monto;
+        persona.Balance += pago.Monto;
 
         foreach (var item in pago.Detalle)
         {
