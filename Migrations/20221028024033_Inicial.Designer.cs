@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RegistroPago.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20221025211613_Inicial")]
+    [Migration("20221028024033_Inicial")]
     partial class Inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

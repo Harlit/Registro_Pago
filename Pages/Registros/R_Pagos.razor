@@ -191,6 +191,7 @@
     }
 
 
+    
     public void Nuevo()
     {
         pagos = new Pagos();
@@ -200,16 +201,23 @@
 
     public async Task Guardar()
     {
-        pagos.Fecha = DateTime.Now;
-        pagos.PersonaId = 1;
-        pagos.Monto = 100;
-        pagos.Concepto = "prestamo Motor";
+        bool guardo;
+        
+        guardo =  await pagosBLL.Guardar(pagos);
+        
 
-        pagos.Detalle.Add(new PagosDetalles { PrestamoId = 1, ValorPagado = 100 });
+        if (guardo)
+        {
+            ShowNotification(
+            new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Guardado correctamente"
+            });
+            Nuevo();
+        }
+       
 
-        pagos.Detalle.Add(new PagosDetalles { PrestamoId = 2, ValorPagado = 200 });
-
-        await pagosBLL.Guardar(pagos);
 
     }
 

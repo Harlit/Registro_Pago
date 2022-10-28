@@ -31,7 +31,7 @@ public class PagosBLL
         foreach (var item in pago.Detalle)
         {
             var prestamo = await _contexto.Prestamos.FindAsync(item.PrestamoId);
-            prestamo!.Balance -= item.ValorPagado;
+            prestamo.Balance -= item.ValorPagado;
         }
 
         var persona = await _contexto.Personas.FindAsync(pago.PersonaId);
@@ -58,7 +58,7 @@ public class PagosBLL
             prestamos!.Balance += item.ValorPagado;
         }
 
-        await _contexto.Database.ExecuteSqlRawAsync($"Delete FROM PagosDetalle Where PagoId = {pagoActual.PagoId}");
+        await _contexto.Database.ExecuteSqlRawAsync($"Delete FROM PagosDetalles Where PagoId = {pagoActual.PagoId}");
 
         foreach (var item in pagoActual.Detalle)
         {
