@@ -45,14 +45,14 @@ public class OcupacionesBLL
     {
         return _contexto.Ocupaciones
                 .Where(o => o.OcupacionId == ocupacionId)
-                .AsNoTracking()
+                .AsTracking()
                 .SingleOrDefault();
 
     }
     public List<Ocupaciones> GetList(Expression<Func<Ocupaciones, bool>> Criterio)
     {
         return _contexto.Ocupaciones
-            .AsNoTracking()
+            .AsTracking()
             .Where(Criterio)
             .ToList();
     }

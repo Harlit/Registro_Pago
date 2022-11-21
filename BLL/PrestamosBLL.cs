@@ -44,7 +44,7 @@ public class PrestamosBLL
         //descontar el monto anterior
         var prestamoAnterior = await _contexto.Prestamos
             .Where(p => p.PrestamoId == prestamoActual.PrestamoId)
-            .AsNoTracking()
+            .AsTracking()
             .SingleOrDefaultAsync();
 
         var personaAnterior = await _contexto.Personas.FindAsync(prestamoAnterior!.PersonaId);
@@ -77,7 +77,7 @@ public class PrestamosBLL
     {
         var ocupacion = await _contexto.Prestamos
                 .Where(p => p.PrestamoId == id)
-                .AsNoTracking()
+                .AsTracking()
                 .SingleOrDefaultAsync();
 
         return ocupacion;
@@ -87,7 +87,7 @@ public class PrestamosBLL
     {
         return await _contexto.Prestamos
             .Where(Criterio)
-            .AsNoTracking()
+            .AsTracking()
             .ToListAsync();
     }
 }

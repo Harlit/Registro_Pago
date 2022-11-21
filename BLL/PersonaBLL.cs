@@ -55,7 +55,7 @@ public class PersonasBLL
     {
         var ocupacion = await _contexto.Personas
                 .Where(p => p.PersonaId == id)
-                .AsNoTracking()
+                .AsTracking()
                 .SingleOrDefaultAsync();
 
         return ocupacion;
@@ -65,7 +65,7 @@ public class PersonasBLL
     {
         return await _contexto.Personas
             .Where(Criterio)
-            .AsNoTracking()
+            .AsTracking()
             .ToListAsync();
     }
 }

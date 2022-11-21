@@ -45,10 +45,10 @@ public class PagosBLL
     {
         var pagoAnterior = await _contexto.Pagos
              .Where(p => p.PagoId == pagoActual.PagoId)
-             .AsNoTracking()
+             .AsTracking()
              .SingleOrDefaultAsync();
 
-        
+
         var personaAnterior = await _contexto.Personas.FindAsync(pagoAnterior!.PersonaId);
         personaAnterior!.Balance += pagoAnterior.Monto;
 
@@ -104,7 +104,7 @@ public class PagosBLL
         var pago = await _contexto.Pagos
         .Where(o => o.PagoId == pagoId)
         .Include(o => o.Detalle)
-        .AsNoTracking()
+        .AsTracking()
         .SingleOrDefaultAsync();
 
         return pago;
@@ -114,7 +114,7 @@ public class PagosBLL
     {
         return await _contexto.Pagos
             .Where(Criterio)
-            .AsNoTracking()
+            .AsTracking()
             .ToListAsync();
     }
 
